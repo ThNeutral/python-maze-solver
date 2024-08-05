@@ -7,6 +7,10 @@ class Direction(Enum):
     RIGHT = 2
     BOTTOM = 3
 
+class WallState(Enum):
+    OPEN = False
+    CLOSE = True
+
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -21,13 +25,15 @@ class Line:
         canvas.create_line(self._point1.x, self._point1.y, self._point2.x, self._point2.y, fill=fill_color, width=width)
 
 class Cell:
-    def __init__(self, left_top_point: Point, right_bottom_point: Point, window: Window):
+    def __init__(self, left_top_point: Point, right_bottom_point: Point, window: Window, is_visited = False):
         self._left_top_point = left_top_point 
         self._right_bottom_point =  right_bottom_point
 
-        self.walls = [True, True, True, True]
+        self.walls = [WallState.CLOSE.value, WallState.CLOSE.value, WallState.CLOSE.value, WallState.CLOSE.value]
 
         self._window = window
+
+        self.is_visited = is_visited
 
     def draw(self):
         right_top_point = Point(self._right_bottom_point.x, self._left_top_point.y)
