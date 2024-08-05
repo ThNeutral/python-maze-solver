@@ -1,13 +1,13 @@
 from window import Window
 from enum import Enum
 
-class Direction(Enum):
+class Directions(Enum):
     LEFT = 0
     TOP = 1
     RIGHT = 2
     BOTTOM = 3
 
-class WallState(Enum):
+class WallStates(Enum):
     OPEN = False
     CLOSE = True
 
@@ -24,16 +24,26 @@ class Line:
     def draw(self, canvas, fill_color, width = 2):
         canvas.create_line(self._point1.x, self._point1.y, self._point2.x, self._point2.y, fill=fill_color, width=width)
 
+class A_Star_Props():
+    def __init__(self):
+        self.parent_row = 0
+        self.parent_column = 0
+        self.f = float("inf")
+        self.g = float("inf")
+        self.h = 0
+
 class Cell:
     def __init__(self, left_top_point: Point, right_bottom_point: Point, window: Window, is_visited = False):
         self._left_top_point = left_top_point 
         self._right_bottom_point =  right_bottom_point
 
-        self.walls = [WallState.CLOSE.value, WallState.CLOSE.value, WallState.CLOSE.value, WallState.CLOSE.value]
+        self.walls = [WallStates.CLOSE.value, WallStates.CLOSE.value, WallStates.CLOSE.value, WallStates.CLOSE.value]
 
         self._window = window
 
         self.is_visited = is_visited
+
+        self.a_star_props = A_Star_Props()
 
     def draw(self):
         right_top_point = Point(self._right_bottom_point.x, self._left_top_point.y)
@@ -41,13 +51,13 @@ class Cell:
         for index, wall in enumerate(self.walls):
             color = "black" if wall else "white"
             match index:
-                case Direction.LEFT.value:
+                case Directions.LEFT.value:
                     self._window.draw_line(Line(left_bottom_point, self._left_top_point), color)
-                case Direction.TOP.value:
+                case Directions.TOP.value:
                     self._window.draw_line(Line(right_top_point, self._left_top_point), color)
-                case Direction.RIGHT.value:
+                case Directions.RIGHT.value:
                     self._window.draw_line(Line(right_top_point, self._right_bottom_point), color)
-                case Direction.BOTTOM.value:
+                case Directions.BOTTOM.value:
                     self._window.draw_line(Line(left_bottom_point, self._right_bottom_point), color)
 
     def get_center(self):
